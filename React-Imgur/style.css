@@ -1,0 +1,10 @@
+#parent {
+  text-align: center;
+}
+#Centered {
+  display: inline-block;
+  max-width: 100%;
+}
+h4 {
+  font-size: 26px;
+}
