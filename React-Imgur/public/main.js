@@ -1,8 +1,20 @@
-'use strict';
+"use strict";
 
 $(document).ready(function () {
+  var LoadingGif = React.createClass({
+    displayName: "LoadingGif",
+
+    render: function render() {
+      return React.createElement(
+        "div",
+        { className: "loading" },
+        React.createElement("img", { src: "ellipsis.gif", alt: "Loading ellipsis" })
+      );
+    }
+  });
+
   var PictureGallery = React.createClass({
-    displayName: 'PictureGallery',
+    displayName: "PictureGallery",
 
     propTypes: {
       token: React.PropTypes.string.isRequired
@@ -12,7 +24,7 @@ $(document).ready(function () {
     },
 
     componentDidMount: function componentDidMount() {
-      var images = [];
+      var pictures = [];
       $.ajax({
         url: 'https://api.imgur.com/3/gallery/hot/viral/0.json',
         type: 'GET',
@@ -22,44 +34,49 @@ $(document).ready(function () {
         success: (function (result) {
           for (var i = 0; i < result.data.length; i++) {
             if (!result.data[i].is_album) {
-              images.push({
+              pictures.push({
                 id: result.data[i].id,
                 url: result.data[i].link,
-                title: result.data[i].title,
-                desc: result.data[i].description
+                title: result.data[i].title
               });
             }
           }
-          this.setState({ images: images });
+          this.setState({ images: pictures });
+          $('.loading').hide();
         }).bind(this)
       });
     },
     render: function render() {
       var imgGallery = this.state.images.map(function (image, i) {
         return React.createElement(
-          'div',
-          { key: i, identity: image.id, id: 'parent' },
+          "div",
+          { key: i, identity: image.id, id: "parent" },
           React.createElement(
-            'h4',
+            "h4",
             null,
             image.title
           ),
-          React.createElement('img', { id: 'Centered', src: image.url }),
           React.createElement(
-            'p',
-            null,
-            image.description
+            "a",
+            { href: image.url, target: "_blank" },
+            React.createElement("img", { id: "Centered", src: image.url })
           )
         );
       });
 
       return React.createElement(
-        'div',
+        "div",
         null,
+        React.createElement(
+          "h1",
+          null,
+          " Simple React Web App that returns the hot and viral pictures in Imgur. Scroll down and enjoy!"
+        ),
+        React.createElement(LoadingGif, null),
         imgGallery
       );
     }
   });
 
-  React.render(React.createElement(PictureGallery, { id: 'galleryStyle', token: 'ac4d88c5194be37' }), document.getElementById('content'));
+  React.render(React.createElement(PictureGallery, { token: "ac4d88c5194be37" }), document.getElementById('content'));
 });

@@ -1,4 +1,14 @@
 $(document).ready(function() {
+  const LoadingGif = React.createClass({
+    render: function() {
+      return (
+        <div className="loading">
+          <img src="ellipsis.gif" alt="Loading ellipsis"></img>
+        </div>
+      );
+    },
+  });
+
   const PictureGallery = React.createClass({
     propTypes: {
       token: React.PropTypes.string.isRequired,
@@ -8,7 +18,7 @@ $(document).ready(function() {
     },
 
     componentDidMount: function() {
-      let images = [];
+      const pictures = [];
       $.ajax({
         url: 'https://api.imgur.com/3/gallery/hot/viral/0.json',
         type: 'GET',
@@ -18,15 +28,15 @@ $(document).ready(function() {
         success: function(result) {
           for (let i = 0; i < result.data.length; i++) {
             if (!result.data[i].is_album) {
-              images.push({
+              pictures.push({
                 id: result.data[i].id,
                 url: result.data[i].link,
                 title: result.data[i].title,
-                desc: result.data[i].description,
               });
             }
           }
-          this.setState({images: images});
+          this.setState({images: pictures});
+          $('.loading').hide();
         }.bind(this),
       });
     },
@@ -35,20 +45,24 @@ $(document).ready(function() {
         return (
           <div key={i} identity={image.id} id = "parent">
             <h4>{image.title}</h4>
-            <img id="Centered" src = {image.url} />
-            <p>{image.description}</p>
+            <a href ={image.url} target ="_blank"><img id="Centered" src = {image.url} /></a>
           </div>
         );
       });
 
       return (
-        <div>{imgGallery}</div>
+        <div>
+          <h1> Simple React Web App that returns the hot and viral pictures in
+          Imgur. Scroll down and enjoy!</h1>
+          <LoadingGif />
+          {imgGallery}
+        </div>
       );
     },
   });
 
   React.render(
-    <PictureGallery id = "galleryStyle" token="ac4d88c5194be37"/>,
+    <PictureGallery token=""/>,
     document.getElementById('content')
   );
 });
